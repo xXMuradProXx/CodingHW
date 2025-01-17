@@ -1,11 +1,12 @@
-public class StockData {
-    private Float price;
+public class StockData extends ExerciseObject {
     private long timestamp;
+    private Float price;
 
-    public StockData(Float price, long timestamp) {
+    public StockData(long timestamp, Float price) {
         this.price = price;
         this.timestamp = timestamp;
     }
+
 
     public Float getPrice() {
         return price;
@@ -21,5 +22,20 @@ public class StockData {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public boolean isSmaller(ExerciseObject other) {
+        return timestamp < ((StockData) other).getTimestamp();
+    }
+
+    @Override
+    public boolean isLarger(ExerciseObject other) {
+        return timestamp > ((StockData) other).getTimestamp();
+    }
+
+    @Override
+    public boolean isEqual(ExerciseObject other) {
+        return timestamp == ((StockData) other).getTimestamp();
     }
 }

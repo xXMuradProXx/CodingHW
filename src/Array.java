@@ -8,9 +8,7 @@ public class Array<T> {
     // ChatGpt suggests using BinaryTree with nodes instead
 
     public Array() {
-        this.capacity = 10;
-        this.size = 0;
-        this.array = (T[]) new Object[capacity];
+        this(10);
     }
 
     public Array(int capacity) {
@@ -53,7 +51,7 @@ public class Array<T> {
     }
 
     public T getLast() {
-        return get(size - 1);
+        return this.get(size - 1);
     }
 
     public int size() {

@@ -2,17 +2,18 @@ import java.util.ArrayList;
 
 public class StockManager {
     // add code here
-    private Array<Stock> stocks; //or TODO HashMap<String, StockData> stocks but not allowed to use imported data structures;
+    private Array<Stock> stocks; //or TODO 2-3 tree. standard 2-3 tree for storing Stocks and 2-3 tree with max value attribute for each node for storing StockData;
+    //TODO maybe to use arrays and heaps instead of trees for better performance
 
     public StockManager() {
     // add code here
+
     }
 
     // 1. Initialize the system
     public void initStocks() {
     // add code here
         stocks = new Array<Stock>();
-        ArrayList<String> stockIds = new ArrayList<>();
     }
 
     // 2. Add a new stock
@@ -30,7 +31,7 @@ public class StockManager {
         }
 
         Stock stock = new Stock(stockId);
-        stock.addStockData(new StockData(price, timestamp));
+        stock.addStockData(new StockData(timestamp, price));
 
         stocks.add(stock);
     }
@@ -59,12 +60,12 @@ public class StockManager {
         for (int i = 0; i < stocks.size(); i++) {
             if (stocks.get(i).getStockId().equals(stockId)) {
                 Stock stock = stocks.get(i);
-                Array<StockData> stockData = stock.getStockData();
+                StockDataTree stockData = stock.getStockData();
 
-                Float currentPrice = stockData.getLast().getPrice();
+                Float currentPrice = stockData.getFinalPrice();
                 Float newPrice = currentPrice + priceDifference;
-                stock.addStockData(new StockData(newPrice, timestamp));
-                System.out.println("Stock price updated successfully " + stock.getStockData().getLast().getPrice());
+                stock.addStockData(new StockData(timestamp, newPrice));
+//                System.out.println("Stock price updated successfully " + stock.getStockData().getLast().getPrice());
                 return;
             }
         }
@@ -76,10 +77,10 @@ public class StockManager {
         for (int i = 0; i < stocks.size(); i++) {
             if (stocks.get(i).getStockId().equals(stockId)) {
                 Stock stock = stocks.get(i);
-                Array<StockData> stockData = stock.getStockData();
-                System.out.println("The stock price is " + stockData.getLast().getPrice());
+                StockDataTree stockData = stock.getStockData();
+//                System.out.println("The stock price is " + stockData.getLast().getPrice());
 
-                return stockData.getLast().getPrice();
+                return stockData.getFinalPrice();
             }
         }
 
@@ -92,16 +93,15 @@ public class StockManager {
         for (int i = 0; i < stocks.size(); i++) {
             if (stocks.get(i).getStockId().equals(stockId)) {
                 Stock stock = stocks.get(i);
-                Array<StockData> stockData = stock.getStockData();
+                StockDataTree stockData = stock.getStockData();
 
-                for (int j = 0; j < stockData.size(); j++) {
-                    if (stockData.get(j).getTimestamp() == timestamp) {
-                        stockData.remove(j);
-                        return;
-                    }
-                }
+                /*if (stockData.size() == 1) {
+                    throw new IllegalArgumentException("Cannot remove the only timestamp");
+                }*/
 
-                throw new IllegalArgumentException("Timestamp not found");
+                stockData.delete(timestamp);
+
+//                throw new IllegalArgumentException("Timestamp not found");
             }
         }
 
@@ -115,8 +115,8 @@ public class StockManager {
 
         for (int i = 0; i < stocks.size(); i++) {
             Stock stock = stocks.get(i);
-            Array<StockData> stockData = stock.getStockData();
-            Float currentPrice = stockData.get(stockData.size() - 1).getPrice();
+            StockDataTree stockData = stock.getStockData();
+            Float currentPrice = stockData.getFinalPrice();
 
             if (currentPrice >= price1 && currentPrice <= price2) {
                 count++;
@@ -134,36 +134,18 @@ public class StockManager {
         // Find stocks within the price range
         for (int i = 0; i < stocks.size(); i++) {
             Stock stock = stocks.get(i);
-            Array<StockData> stockData = stock.getStockData();
+            /*Array<StockData> stockData = stock.getStockData();
             Float currentPrice = stockData.get(stockData.size() - 1).getPrice();
 
             if (currentPrice >= price1 && currentPrice <= price2) {
                 stocksInRange.add(stock);
-            }
+            }*/
         }
 
         String[] stockIds = new String[stocksInRange.size()];
         // Sort the stocks by price
-        for (int i = 0; i < stocksInRange.size()-1; i++) {
-            Stock stock1 = stocksInRange.get(i);
-            Stock stock2 = stocksInRange.get(i+1);
+        // TODO: Implement a sorting algorithm
 
-            Float p1 = stock1.getStockData().get(stock1.getStockData().size()-1).getPrice();
-            Float p2 = stock2.getStockData().get(stock2.getStockData().size()-1).getPrice();
-
-            if (p1 > p2) {
-                stockIds[i] = stock2.getStockId();
-                stockIds[i+1] = stock1.getStockId();
-                i = -1;
-            }
-            else if (p1.equals(p2)) {
-                if (stock1.getStockId().compareTo(stock2.getStockId()) > 0) {
-                    stockIds[i] = stock2.getStockId();
-                    stockIds[i+1] = stock1.getStockId();
-                    i = -1;
-                }
-            }
-        }
 
         return stockIds;
     }

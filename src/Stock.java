@@ -1,11 +1,11 @@
 
-public class Stock {
+public class Stock extends ExerciseObject {
     private String stockId;
-    private Array<StockData> stockData;
+    private StockDataTree stockData;
 
     public Stock(String stockId) {
         this.stockId = stockId;
-        this.stockData = new Array<StockData>();
+        this.stockData = new StockDataTree();
     }
 
     public String getStockId() {
@@ -16,15 +16,34 @@ public class Stock {
         this.stockId = stockId;
     }
 
-    public Array<StockData> getStockData() {
+    public StockDataTree getStockData() {
         return stockData;
     }
 
-    public void setStockData(Array<StockData> stockData) {
+    public void setStockData(StockDataTree stockData) {
         this.stockData = stockData;
     }
 
     public void addStockData(StockData stockData) {
-        this.stockData.add(stockData);
+        this.stockData.insert(stockData.getTimestamp(), stockData.getPrice());
+    }
+
+    public Float getCurrentPrice() {
+        return stockData.getFinalPrice();
+    }
+
+    @Override
+    public boolean isSmaller(ExerciseObject other) {
+        return stockId.compareTo(((Stock) other).getStockId()) < 0;
+    }
+
+    @Override
+    public boolean isLarger(ExerciseObject other) {
+        return stockId.compareTo(((Stock) other).getStockId()) > 0;
+    }
+
+    @Override
+    public boolean isEqual(ExerciseObject other) {
+        return stockId.compareTo(((Stock) other).getStockId()) == 0;
     }
 }
