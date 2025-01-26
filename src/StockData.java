@@ -1,19 +1,19 @@
 public class StockData {
     private long timestamp;
-    private Float price;
+    private Float priceDifference;
 
-    public StockData(long timestamp, Float price) {
-        this.price = price;
+    public StockData(long timestamp, Float priceDifference) {
+        this.priceDifference = priceDifference;
         this.timestamp = timestamp;
     }
 
 
-    public Float getPrice() {
-        return price;
+    public Float getPriceDifference() {
+        return priceDifference;
     }
 
-    public void setPrice(Float price) {
-        this.price = price;
+    public void setPriceDifference(Float priceDifference) {
+        this.priceDifference = priceDifference;
     }
 
     public long getTimestamp() {

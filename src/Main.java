@@ -99,12 +99,17 @@ public class Main {
             }
 
         }
-/*        expression = stockmanger.getStockPrice("STUVWX") == 237.02f;
+
+        /*expression = stockmanger.getStockPrice("STUVWX") == 237.02f;
         Assert(expression);
         expression = stockmanger.getStockPrice("YZABCD") == 96.9f;
         Assert(expression);
         expression = stockmanger.getStockPrice("EFGHIJ") == 150.78f;
         Assert(expression);*/
+
+        System.out.println(stockmanger.getStockPrice("STUVWX"));
+        System.out.println(stockmanger.getStockPrice("YZABCD"));
+        System.out.println(stockmanger.getStockPrice("EFGHIJ"));
 
 
         for (String stockId : stockIds) {
@@ -125,10 +130,14 @@ public class Main {
             double price = stockmanger.getStockPrice(stockId);
             System.out.println("Stock ID: " + stockId + ", Current Price: " + price);
         }
-        expression = stockmanger.getStockPrice("STUVWX") == 240.23f;
-//        Assert(expression);
+        /*expression = stockmanger.getStockPrice("STUVWX") == 240.23f;
+        Assert(expression);
         expression = stockmanger.getStockPrice("EFGHIJ") == 154.9f;
-//        Assert(expression);
+        Assert(expression);*/
+
+        System.out.println(stockmanger.getStockPrice("STUVWX"));
+        System.out.println(stockmanger.getStockPrice("EFGHIJ"));
+
         Float price1 = 10f;
         Float price2 = 30f;
         int stockamount = stockmanger.getAmountStocksInPriceRange(price1, price2);
@@ -159,5 +168,12 @@ public class Main {
             throw new AssertionError();
         }
 
+    }
+
+    public static void compareFloats(Float num1, Float num2) {
+        final float epsilon = 1e-2f;
+        if (Math.abs(num1 - num2) > epsilon) {
+            throw new AssertionError();
+        }
     }
 }

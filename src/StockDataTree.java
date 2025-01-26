@@ -1,11 +1,9 @@
 public class StockDataTree {
 
-    //TODO:
-
     private StockDataNode root;
 
     private boolean isLeaf(StockDataNode node) {
-        return node == null || node.left == null || node.isLeaf();
+        return node == null || node.left == null;
     }
 
     public StockDataTree() {
@@ -20,12 +18,12 @@ public class StockDataTree {
     }
 
     // might remove it because root is always initialized with a sentinel
-    private StockDataNode find(long timestamp) {
+    public StockDataNode find(long timestamp) {
         return findRecursive(root, timestamp);
     }
 
     private StockDataNode findRecursive(StockDataNode stockDataNode, long timestamp) {
-        if (stockDataNode.isLeaf()) {
+        if (isLeaf(stockDataNode)) {
             if (stockDataNode.timestamp == timestamp) {
                 return stockDataNode;
             } else {
@@ -44,30 +42,21 @@ public class StockDataTree {
         }
     }
 
-    public void insert(long timestamp, Float price) {
-        StockDataNode newNode = new StockDataNode(timestamp, price);
-
-        System.out.println("Inserting stockData with timestamp: " + timestamp + " and price: " + price);
-        printTree();
-
+    public void insert(long timestamp, Float priceDifference) {
+        StockDataNode newNode = new StockDataNode(timestamp, priceDifference);
         StockDataNode y = this.root;
 
-        while(y != null && !y.isLeaf()){
+        while(!isLeaf(y)){
             if(timestamp < y.left.timestamp){
-                System.out.println("y=y.left");
                 y = y.left;
             }
             else if(timestamp < y.middle.timestamp || timestamp == Long.MAX_VALUE){
-                System.out.println("y=y.middle");
                 y = y.middle;
             }
             else{
-                System.out.println("y=y.right");
                 y = y.right;
             }
         }
-
-        System.out.println("Arrived to leaf node");
 
         StockDataNode x = y.p;
         newNode = insertAndSplit(x, newNode);
@@ -88,11 +77,6 @@ public class StockDataTree {
             setChildren(newRoot, x, newNode, null);
             root = newRoot;
         }
-
-        System.out.println("After inserting stockData with timestamp: " + timestamp + " and price: " + price);
-        printTree();
-        System.out.println("-----------------------------------------------------------------------------");
-
     }
 
     private StockDataNode insertAndSplit(StockDataNode node, StockDataNode newChild){
@@ -101,17 +85,13 @@ public class StockDataTree {
         StockDataNode right = node.right;
 
         if(right == null){
-            System.out.println("right child is null");
             if(newChild.timestamp < left.timestamp){
-                System.out.println("newChild < left");
                 setChildren(node, newChild, left, middle);
             }
             else if(newChild.timestamp < middle.timestamp){
-                System.out.println("newChild < middle");
                 setChildren(node, left, newChild, middle);
             }
             else{
-                System.out.println("inserting newChild to the right");
                 setChildren(node, left, middle, newChild);
             }
 
@@ -140,15 +120,7 @@ public class StockDataTree {
         return y;
     }
 
-    public void delete(long timestamp){
-        StockDataNode x = find(timestamp);
-        if(x == null){
-            throw new IllegalArgumentException("timestamp not found");
-        }
-
-        System.out.println(x.timestamp + "  " + x.price);
-        System.out.println(x.p.timestamp + "  " + x.p.price);
-
+    public void delete(StockDataNode x){
         StockDataNode y = x.p;
 
         if(x == y.left){
@@ -258,13 +230,6 @@ public class StockDataTree {
         updateKey(parent);
     }
 
-    public Float getFinalPrice(){
-        if (root.timestamp != Long.MIN_VALUE){
-            return root.price;
-        }
-        throw new IllegalArgumentException("No stock data available");
-    }
-
     public void printTree(){
         printTreeRecursive("", root, 0);
     }
@@ -278,7 +243,7 @@ public class StockDataTree {
             System.out.print("  ");
         }
 
-        System.out.println(child + "Node: " + node.timestamp + "  " + node.price);
+        System.out.println(child + "Node: " + node.timestamp + "  " + node.priceDifference);
 
         printTreeRecursive("L: ", node.left, level+1);
         printTreeRecursive("M: ", node.middle, level+1);

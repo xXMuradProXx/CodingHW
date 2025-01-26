@@ -1,5 +1,5 @@
-public class StockTree {
-
+public class StockPriceTree {
+    // TODO: implement based on stockPrice comparison
     private static final String MIN = "";
     private static final String MAX = null;
 
@@ -9,7 +9,7 @@ public class StockTree {
         return node == null || node.left == null;
     }
 
-    public StockTree() {
+    public StockPriceTree() {
         root = new StockNode();
         StockNode left = new StockNode();
         StockNode middle = new StockNode();
@@ -47,36 +47,50 @@ public class StockTree {
 
     public void insert(Stock stock) {
         StockNode newNode = new StockNode(stock);
+//        printTree();
         StockNode y = this.root;
 
-        while (!isLeaf(y)) {
-            if (compareStocks(stock, y.left.stock) < 0) {
+        while(!isLeaf(y)){
+            if(compareStocks(stock, y.left.stock) < 0){
+                System.out.println("y=y.left");
                 y = y.left;
-            } else if (compareStocks(stock, y.middle.stock) < 0 || stock.getStockId() == null) {
+            }
+            else if(compareStocks(stock, y.middle.stock) < 0 || stock.getStockId() == null){
+                System.out.println("y=y.middle");
                 y = y.middle;
-            } else {
+            }
+            else{
+                System.out.println("y=y.right");
                 y = y.right;
             }
         }
 
+        System.out.println("Arrived to leaf node");
+
         StockNode x = y.p;
         newNode = insertAndSplit(x, newNode);
 
-        while (x != root) {
+        while (x != root){
             x = x.p;
-            if (newNode != null) {
+            if(newNode != null){
                 newNode = insertAndSplit(x, newNode);
-            } else {
+            }
+            else {
                 updateKey(x);
             }
         }
 
         // Split the root
-        if (newNode != null) {
+        if(newNode != null){
             StockNode newRoot = new StockNode();
             setChildren(newRoot, x, newNode, null);
             root = newRoot;
         }
+
+        System.out.println("After inserting stockData with stockId: " + stock.getStockId());
+//        printTree();
+        System.out.println("-----------------------------------------------------------------------------");
+
     }
 
     private StockNode insertAndSplit(StockNode node, StockNode newChild){
@@ -85,13 +99,17 @@ public class StockTree {
         StockNode right = node.right;
 
         if(right == null){
+            System.out.println("right child is null");
             if(compareStocks(newChild.stock, left.stock) < 0){
+                System.out.println("newChild < left");
                 setChildren(node, newChild, left, middle);
             }
             else if(compareStocks(newChild.stock, middle.stock) < 0){
+                System.out.println("newChild < middle");
                 setChildren(node, left, newChild, middle);
             }
             else{
+                System.out.println("inserting newChild to the right");
                 setChildren(node, left, middle, newChild);
             }
 

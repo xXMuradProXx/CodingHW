@@ -23,10 +23,6 @@ public class StockNode {
         this.stock = other.stock;
     }
 
-    public boolean isLeaf() {
-        return this.left == null/* && StockTree.this.root != StockNode.this*/;
-    }
-
     public String getStockId() {
         return this.stock.getStockId();
     }

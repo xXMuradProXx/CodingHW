@@ -26,15 +26,19 @@ public class StockManager {
             throw new IllegalArgumentException("Stock already exists");
         }
 
-        Stock stock = new Stock(stockId); // create a new stock
-        stock.addStockData(new StockData(timestamp, price)); // add the initial stock data
+        Stock stock = new Stock(stockId, timestamp, price); // add the initial stock data
 
         stocks.insert(stock);
     }
 
     // 3. Remove a stock
     public void removeStock(String stockId) {
-        stocks.delete(stockId);
+        StockNode stockNode = stocks.find(stockId);
+        if(stockNode == null){
+            throw new IllegalArgumentException("Stock not found");
+        }
+
+        stocks.delete(stockNode);
     }
 
     // 4. Update a stock price
@@ -49,8 +53,7 @@ public class StockManager {
         }
 
         Stock stock = stockNode.stock;
-        Float newPrice = stock.getCurrentPrice() + priceDifference;
-        stock.addStockData(new StockData(timestamp, newPrice));
+        stock.addStockData(new StockData(timestamp, priceDifference));
     }
 
     // 5. Get the current price of a stock
@@ -65,6 +68,7 @@ public class StockManager {
     }
 
     // 6. Remove a specific timestamp from a stock's history
+    // TODO: finish this method. Removing timestamp from stock's history is not implemented yet, the price should change accordingly
     public void removeStockTimestamp(String stockId, long timestamp) {
         StockNode stockNode = stocks.find(stockId);
         if (stockNode == null) {
@@ -72,7 +76,14 @@ public class StockManager {
         }
 
         Stock stock = stockNode.stock;
-        stock.getStockData().delete(timestamp);
+        StockDataTree stockData = stock.getStockData();
+        StockDataNode stockDataNode = stockData.find(timestamp);
+        if(stockDataNode == null){
+            throw new IllegalArgumentException("Timestamp not found");
+        }
+
+        stock.removeStockData(stockDataNode.priceDifference);
+        stockData.delete(stockDataNode);
     }
 
     // 7. Get the amount of stocks in a given price range

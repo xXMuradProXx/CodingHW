@@ -1,7 +1,7 @@
 public class StockDataNode {
     // keys
     long timestamp;
-    Float price;
+    Float priceDifference;
     // other nodes
     StockDataNode left, middle, right;
     StockDataNode p;
@@ -12,18 +12,14 @@ public class StockDataNode {
         this(timestamp, null);
     }
 
-    StockDataNode(long timestamp, Float price) {
+    StockDataNode(long timestamp, Float priceDifference) {
         this.timestamp = timestamp;
-        this.price = price;
+        this.priceDifference = priceDifference;
         left = middle = right = null;
     }
 
     public void updateKeys(StockDataNode other){
         this.timestamp = other.timestamp;
-        this.price = other.price;
-    }
-
-    public boolean isLeaf() {
-        return this.left == null/* && StockDataTree.this.root != StockDataNode.this*/;
+        this.priceDifference = other.priceDifference;
     }
 }

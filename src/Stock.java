@@ -1,6 +1,7 @@
 
 public class Stock implements Comparable<Stock> {
     private String stockId;
+    private Long timestamp;
     private Float currentPrice;
     private StockDataTree stockData;
 
@@ -9,10 +10,12 @@ public class Stock implements Comparable<Stock> {
         this.stockData = new StockDataTree();
     }
 
-    public Stock(String stockId, long timestamp, Float price) {
+    public Stock(String stockId, long timestamp, Float startPrice) {
         this.stockId = stockId;
+        this.timestamp = timestamp;
+        this.currentPrice = startPrice;
         this.stockData = new StockDataTree();
-        this.addStockData(timestamp, price);
+//        this.addStockData(timestamp, price);
     }
 
     public String getStockId() {
@@ -31,24 +34,33 @@ public class Stock implements Comparable<Stock> {
         this.stockData = stockData;
     }
 
-    public void addStockData(long timestamp, Float price) {
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Adding stock data for " + stockId + " at timestamp " + timestamp + " with price " + price);
-        this.stockData.insert(timestamp, price);
-
-        this.currentPrice = price;
-    }
-
     public void addStockData(StockData stockData) {
         System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("Adding stock data for " + stockId + " at timestamp " + stockData.getTimestamp() + " with price " + stockData.getPrice());
-        this.stockData.insert(stockData.getTimestamp(), stockData.getPrice());
+        System.out.println("New price for stock " + stockId + " is " + this.currentPrice + " with price difference " + stockData.getPriceDifference());
+        this.stockData.insert(stockData.getTimestamp(), stockData.getPriceDifference());
 
-        this.currentPrice = stockData.getPrice();
+        this.currentPrice += stockData.getPriceDifference();
+        this.stockData.printTree();
+        System.out.println("New price for stock " + stockId + " is " + this.currentPrice);
+        System.out.println("-----------------------------------------------------------------------------");
+    }
+
+    public void removeStockData(Float priceDifference) {
+        System.out.println("-----------------------------------------------------------------------------");
+        System.out.println("New price for stock " + stockId + " is " + this.currentPrice + " with price difference " + -priceDifference);
+
+        this.currentPrice -= priceDifference;
+        this.stockData.printTree();
+        System.out.println("New price for stock " + stockId + " is " + this.currentPrice);
+        System.out.println("-----------------------------------------------------------------------------");
     }
 
     public Float getCurrentPrice() {
         return currentPrice;
+    }
+
+    public void setCurrentPrice(Float currentPrice) {
+        this.currentPrice = currentPrice;
     }
 
     @Override
