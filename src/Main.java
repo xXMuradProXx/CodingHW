@@ -74,6 +74,11 @@ public class Main {
         ArrayList<Map.Entry<Long, Float>> data1 = new ArrayList<>();
         data1.add(Map.entry(initialTimestamps.get(0) + 60000L, 5.67f)); // Add 1 minute
         data1.add(Map.entry(initialTimestamps.get(0) + 120000L, -3.21f)); // Add 2 minutes
+        data1.add(Map.entry(initialTimestamps.get(0) + 180000L, 0.21f)); // Add 3 minutes
+        data1.add(Map.entry(initialTimestamps.get(0) + 240000L, -1.005f)); // Add 4 minutes
+        data1.add(Map.entry(initialTimestamps.get(0) + 300000L, 0.5f)); // Add 5 minutes
+        data1.add(Map.entry(initialTimestamps.get(0) + 360000L, 2f)); // Add 6 minutes
+        data1.add(Map.entry(initialTimestamps.get(0) + 420000L, -2f)); // Add 7 minutes
         additionalData.put("STUVWX", data1);
 
         ArrayList<Map.Entry<Long, Float>> data2 = new ArrayList<>();
