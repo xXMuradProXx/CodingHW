@@ -13,6 +13,9 @@ public class hw4 {
         // Divide matrices into 2x2 submatrices
         int mid = n/2;
 
+
+
+
         int[][] A11 = new int[mid][mid];
         int[][] A12 = new int[mid][mid];
         int[][] A21 = new int[mid][mid];
