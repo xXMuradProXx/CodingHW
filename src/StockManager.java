@@ -1,6 +1,7 @@
 public class StockManager {
     // add code here
     private StockTree stocks;
+    private StockPriceTree stockPrices;
 
     public StockManager() {
     // add code here
@@ -11,6 +12,7 @@ public class StockManager {
     public void initStocks() {
     // add code here
         stocks = new StockTree();
+        stockPrices = new StockPriceTree();
     }
 
     // 2. Add a new stock
@@ -29,16 +31,22 @@ public class StockManager {
         Stock stock = new Stock(stockId, timestamp, price); // add the initial stock data
 
         stocks.insert(stock);
+        stockPrices.insert(stock);
     }
 
     // 3. Remove a stock
     public void removeStock(String stockId) {
         StockNode stockNode = stocks.find(stockId);
+
         if(stockNode == null){
             throw new IllegalArgumentException("Stock not found");
         }
 
+        Stock stock = stockNode.stock;
+        StockPriceNode stockPriceNode = stockPrices.find(stock);
+
         stocks.delete(stockNode);
+        stockPrices.delete(stockPriceNode);
     }
 
     // 4. Update a stock price
@@ -53,7 +61,14 @@ public class StockManager {
         }
 
         Stock stock = stockNode.stock;
+
+        StockPriceNode stockPriceNode = stockPrices.find(stock);
+        stockPrices.delete(stockPriceNode);
+
         stock.addStockData(new StockData(timestamp, priceDifference));
+
+        stockPrices.insert(stock);
+
     }
 
     // 5. Get the current price of a stock
@@ -68,7 +83,6 @@ public class StockManager {
     }
 
     // 6. Remove a specific timestamp from a stock's history
-    // TODO: finish this method. Removing timestamp from stock's history is not implemented yet, the price should change accordingly
     public void removeStockTimestamp(String stockId, long timestamp) {
         StockNode stockNode = stocks.find(stockId);
         if (stockNode == null) {
@@ -82,53 +96,78 @@ public class StockManager {
             throw new IllegalArgumentException("Timestamp not found");
         }
 
-        stock.removeStockData(stockDataNode.priceDifference);
+        stockPrices.delete(stockPrices.find(stock));
+
         stockData.delete(stockDataNode);
+        stock.removeStockData(stockDataNode.priceDifference);
+
+        stockPrices.insert(stock);
     }
 
     // 7. Get the amount of stocks in a given price range
     public int getAmountStocksInPriceRange(Float price1, Float price2) {
     // add code here
-        int count = 0;
 
-        /*for (int i = 0; i < stocks.size(); i++) {
-            Stock stock = stocks.get(i);
-            StockDataTree stockData = stock.getStockData();
-            Float currentPrice = stock.getCurrentPrice();
+        if (price1 > price2) {
+            throw new IllegalArgumentException("Illegal price range");
+        }
 
-            if (currentPrice >= price1 && currentPrice <= price2) {
-                count++;
-            }
-        }*/
+        // Create two dummy stocks with the given prices
+        Stock min = new Stock(Stock.MIN_ID, price1);
+        Stock max = new Stock(Stock.MAX_ID, price2);
 
-        return count;
+        // Insert the dummy stocks into the tree
+        stockPrices.insert(min);
+        stockPrices.insert(max);
+
+        // Find the nodes with dummy stocks in the tree
+        StockPriceNode minNode = stockPrices.find(min);
+        StockPriceNode maxNode = stockPrices.find(max);
+
+        // Get the rank of the dummy stocks
+        int rank1 = stockPrices.rank(minNode);
+        int rank2 = stockPrices.rank(maxNode);
+
+        // Delete the dummy stocks from the tree
+        stockPrices.delete(minNode);
+        stockPrices.delete(maxNode);
+
+        // Return the difference in ranks
+        return rank2-rank1-1;
     }
 
     // 8. Get a list of stock IDs within a given price range
     public String[] getStocksInPriceRange(Float price1, Float price2) {
-    // add code here
-        /*Array<Stock> stocksInRange = new Array<Stock>();
 
-        // Find stocks within the price range
-        for (int i = 0; i < stocks.size(); i++) {
-            Stock stock = stocks.get(i);
-            Float currentPrice = stock.getCurrentPrice();
-
-            if (currentPrice >= price1 && currentPrice <= price2) {
-                stocksInRange.add(stock);
-            }
+        if (price1 > price2) {
+            throw new IllegalArgumentException("Illegal price range");
         }
 
-        String[] stockIds = new String[stocksInRange.size()];*/
-        // Sort the stocks by price
-        // TODO: Implement a sorting algorithm
-        //  suggestion: create another tree that stores the stocks by price, therefore will be able to get the stocks in sorted order
-        // if we are using a 2-3 tree, we can use in-order traversal to get the stocks in sorted order
-        // just to call find() method for each stockId in
+        int numStocksInRange = getAmountStocksInPriceRange(price1, price2);
+        String[] stocksInRange = new String[numStocksInRange];
 
+        // Create two dummy stocks with the given prices
+        Stock min = new Stock(Stock.MIN_ID, price1);
+        Stock max = new Stock(Stock.MAX_ID, price2);
 
-//        return stockIds;
-        return null;
+        // Insert the dummy stocks into the tree
+        stockPrices.insert(min);
+        stockPrices.insert(max);
+
+        // Find the nodes with dummy stocks in the tree
+        StockPriceNode minNode = stockPrices.find(min);
+
+        StockPriceNode temp = minNode.successor; // Move to the next node which actually holds the first stock in the range
+
+        for (int i = 0; i < numStocksInRange; i++) {
+            stocksInRange[i] = temp.stock.getStockId();
+            temp = temp.successor;
+        }
+
+        // Delete the dummy stocks from the tree
+        stockPrices.delete(minNode);
+
+        return stocksInRange;
     }
    
 }

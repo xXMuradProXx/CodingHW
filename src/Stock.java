@@ -5,8 +5,24 @@ public class Stock implements Comparable<Stock> {
     private Float currentPrice;
     private StockDataTree stockData;
 
+    public static final String MIN_ID = "";
+    public static final String MAX_ID = null;
+
+    public static final long MIN_TIMESTAMP = Long.MIN_VALUE;
+    public static final long MAX_TIMESTAMP = Long.MAX_VALUE;
+
+    public static final Float MIN_PRICE = Float.NEGATIVE_INFINITY;
+    public static final Float MAX_PRICE = Float.POSITIVE_INFINITY;
+
+
     public Stock(String stockId) {
         this.stockId = stockId;
+        this.stockData = new StockDataTree();
+    }
+
+    public Stock(String stockId, Float currentPrice) {
+        this.stockId = stockId;
+        this.currentPrice = currentPrice;
         this.stockData = new StockDataTree();
     }
 
@@ -15,7 +31,6 @@ public class Stock implements Comparable<Stock> {
         this.timestamp = timestamp;
         this.currentPrice = startPrice;
         this.stockData = new StockDataTree();
-//        this.addStockData(timestamp, price);
     }
 
     public String getStockId() {
@@ -35,24 +50,12 @@ public class Stock implements Comparable<Stock> {
     }
 
     public void addStockData(StockData stockData) {
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("New price for stock " + stockId + " is " + this.currentPrice + " with price difference " + stockData.getPriceDifference());
         this.stockData.insert(stockData.getTimestamp(), stockData.getPriceDifference());
-
         this.currentPrice += stockData.getPriceDifference();
-        this.stockData.printTree();
-        System.out.println("New price for stock " + stockId + " is " + this.currentPrice);
-        System.out.println("-----------------------------------------------------------------------------");
     }
 
     public void removeStockData(Float priceDifference) {
-        System.out.println("-----------------------------------------------------------------------------");
-        System.out.println("New price for stock " + stockId + " is " + this.currentPrice + " with price difference " + -priceDifference);
-
         this.currentPrice -= priceDifference;
-        this.stockData.printTree();
-        System.out.println("New price for stock " + stockId + " is " + this.currentPrice);
-        System.out.println("-----------------------------------------------------------------------------");
     }
 
     public Float getCurrentPrice() {

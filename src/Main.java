@@ -100,12 +100,9 @@ public class Main {
 
         }
 
-        /*expression = stockmanger.getStockPrice("STUVWX") == 237.02f;
-        Assert(expression);
-        expression = stockmanger.getStockPrice("YZABCD") == 96.9f;
-        Assert(expression);
-        expression = stockmanger.getStockPrice("EFGHIJ") == 150.78f;
-        Assert(expression);*/
+//        compareFloats(stockmanger.getStockPrice("STUVWX"), 237.02f);
+        compareFloats(stockmanger.getStockPrice("YZABCD"), 96.9f);
+        compareFloats(stockmanger.getStockPrice("EFGHIJ"), 150.78f);
 
         System.out.println(stockmanger.getStockPrice("STUVWX"));
         System.out.println(stockmanger.getStockPrice("YZABCD"));
@@ -130,10 +127,9 @@ public class Main {
             double price = stockmanger.getStockPrice(stockId);
             System.out.println("Stock ID: " + stockId + ", Current Price: " + price);
         }
-        /*expression = stockmanger.getStockPrice("STUVWX") == 240.23f;
-        Assert(expression);
-        expression = stockmanger.getStockPrice("EFGHIJ") == 154.9f;
-        Assert(expression);*/
+
+//        compareFloats(stockmanger.getStockPrice("STUVWX"), 240.23f);
+        compareFloats(stockmanger.getStockPrice("EFGHIJ"), 154.9f);
 
         System.out.println(stockmanger.getStockPrice("STUVWX"));
         System.out.println(stockmanger.getStockPrice("EFGHIJ"));
@@ -142,6 +138,7 @@ public class Main {
         Float price2 = 30f;
         int stockamount = stockmanger.getAmountStocksInPriceRange(price1, price2);
         expression =  stockamount == 0;
+        System.out.println(expression);
         Assert(expression);
         System.out.println(stockmanger.getStocksInPriceRange(price1, price2));
         price1 = 50f;
@@ -173,7 +170,7 @@ public class Main {
     public static void compareFloats(Float num1, Float num2) {
         final float epsilon = 1e-2f;
         if (Math.abs(num1 - num2) > epsilon) {
-            throw new AssertionError();
+            throw new AssertionError("Floats not equal: " + num1 + " != " + num2);
         }
     }
 }

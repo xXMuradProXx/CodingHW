@@ -1,73 +1,75 @@
 public class StockPriceTree {
-    // TODO: implement based on stockPrice comparison
-    private static final String MIN = "";
-    private static final String MAX = null;
 
-    private StockNode root;
-
-    private boolean isLeaf(StockNode node) {
-        return node == null || node.left == null;
-    }
+    private StockPriceNode root;
 
     public StockPriceTree() {
-        root = new StockNode();
-        StockNode left = new StockNode();
-        StockNode middle = new StockNode();
+        this.root = new StockPriceNode();
 
-        left.stock = new Stock(MIN);
-        middle.stock = new Stock(MAX);
+        StockPriceNode left = new StockPriceNode();
+        StockPriceNode middle = new StockPriceNode();
+
+        left.stock = new Stock(Stock.MIN_ID, Stock.MIN_PRICE);
+        middle.stock = new Stock(Stock.MAX_ID, Stock.MAX_PRICE);
 
         setChildren(root, left, middle, null);
     }
 
     // might remove it because root is always initialized with a sentinel
-    public StockNode find(String stockId) {
-        return findRecursive(root, stockId);
+    public StockPriceNode find(Stock stock) {
+        return findRecursive(root, stock);
     }
 
-    private StockNode findRecursive(StockNode stockNode, String stockId) {
-        if (isLeaf(stockNode)) {
-            if (compareStocks(stockNode.getStockId(), stockId) == 0) {
-                return stockNode;
+    private StockPriceNode findRecursive(StockPriceNode stockPriceNode, Stock stock) {
+        if (isLeaf(stockPriceNode)) {
+            if (compareStocks(stockPriceNode.stock, stock) == 0) {
+                return stockPriceNode;
             } else {
                 return null;
             }
         }
 
-        if (compareStocks(stockId, stockNode.left.getStockId()) <= 0) {
-            return findRecursive(stockNode.left, stockId);
+        if (compareStocks(stock, stockPriceNode.left.stock) <= 0) {
+            return findRecursive(stockPriceNode.left, stock);
         }
-        else if (compareStocks(stockId, stockNode.middle.getStockId()) <= 0) {
-            return findRecursive(stockNode.middle, stockId);
+        else if (compareStocks(stock, stockPriceNode.middle.stock) <= 0) {
+            return findRecursive(stockPriceNode.middle, stock);
         }
         else {
-            return findRecursive(stockNode.right, stockId);
+            return findRecursive(stockPriceNode.right, stock);
         }
     }
 
     public void insert(Stock stock) {
-        StockNode newNode = new StockNode(stock);
-//        printTree();
-        StockNode y = this.root;
+        StockPriceNode newNode = new StockPriceNode(stock);
+
+        insertRecursive(newNode); // add the new stock by price
+
+        // update the successor and predecessor
+        StockPriceNode successor = successor(newNode);
+        StockPriceNode predecessor = predecessor(newNode);
+
+        if(predecessor != null){
+            predecessor.successor = newNode;
+        }
+        newNode.successor = successor;
+    }
+
+    public void insertRecursive(StockPriceNode newNode) {
+        StockPriceNode y = this.root;
 
         while(!isLeaf(y)){
-            if(compareStocks(stock, y.left.stock) < 0){
-                System.out.println("y=y.left");
+            if(compareStocks(newNode.stock, y.left.stock) < 0){
                 y = y.left;
             }
-            else if(compareStocks(stock, y.middle.stock) < 0 || stock.getStockId() == null){
-                System.out.println("y=y.middle");
+            else if(compareStocks(newNode.stock, y.middle.stock) < 0){
                 y = y.middle;
             }
             else{
-                System.out.println("y=y.right");
                 y = y.right;
             }
         }
 
-        System.out.println("Arrived to leaf node");
-
-        StockNode x = y.p;
+        StockPriceNode x = y.p;
         newNode = insertAndSplit(x, newNode);
 
         while (x != root){
@@ -82,41 +84,33 @@ public class StockPriceTree {
 
         // Split the root
         if(newNode != null){
-            StockNode newRoot = new StockNode();
+            StockPriceNode newRoot = new StockPriceNode();
             setChildren(newRoot, x, newNode, null);
             root = newRoot;
         }
 
-        System.out.println("After inserting stockData with stockId: " + stock.getStockId());
-//        printTree();
-        System.out.println("-----------------------------------------------------------------------------");
-
     }
 
-    private StockNode insertAndSplit(StockNode node, StockNode newChild){
-        StockNode left = node.left;
-        StockNode middle = node.middle;
-        StockNode right = node.right;
+    private StockPriceNode insertAndSplit(StockPriceNode node, StockPriceNode newChild){
+        StockPriceNode left = node.left;
+        StockPriceNode middle = node.middle;
+        StockPriceNode right = node.right;
 
         if(right == null){
-            System.out.println("right child is null");
             if(compareStocks(newChild.stock, left.stock) < 0){
-                System.out.println("newChild < left");
                 setChildren(node, newChild, left, middle);
             }
             else if(compareStocks(newChild.stock, middle.stock) < 0){
-                System.out.println("newChild < middle");
                 setChildren(node, left, newChild, middle);
             }
             else{
-                System.out.println("inserting newChild to the right");
                 setChildren(node, left, middle, newChild);
             }
 
             return null;
         }
 
-        StockNode y = new StockNode();
+        StockPriceNode y = new StockPriceNode();
 
         if(compareStocks(newChild.stock, left.stock) < 0){
             setChildren(node, newChild, left, null);
@@ -138,8 +132,19 @@ public class StockPriceTree {
         return y;
     }
 
-    public void delete(StockNode x){
-        StockNode y = x.p;
+    public void delete(StockPriceNode x) {
+        StockPriceNode successor = successor(x);
+        StockPriceNode predecessor = predecessor(x);
+
+        if(predecessor != null){
+            predecessor.successor = successor;
+        }
+
+        deleteRecursive(x);
+    }
+
+    public void deleteRecursive(StockPriceNode x){
+        StockPriceNode y = x.p;
 
         if(x == y.left){
             setChildren(y, y.middle, y.right, null);
@@ -169,10 +174,10 @@ public class StockPriceTree {
         }
     }
 
-    private StockNode borrowOrMerge(StockNode y){
-        StockNode z = y.p;
+    private StockPriceNode borrowOrMerge(StockPriceNode y){
+        StockPriceNode z = y.p;
         if (y == z.left){
-            StockNode x = z.middle;
+            StockPriceNode x = z.middle;
             if(x.right != null){
                 setChildren(y, y.left, x.left, null);
                 setChildren(x, x.middle, x.right, null);
@@ -184,7 +189,7 @@ public class StockPriceTree {
             return z;
         }
         if (y == z.middle){
-            StockNode x = z.left;
+            StockPriceNode x = z.left;
             if(x.right != null){
                 setChildren(y, x.right, y.left, null);
                 setChildren(x, x.left, x.middle, null);
@@ -196,7 +201,7 @@ public class StockPriceTree {
             return z;
         }
 
-        StockNode x = z.middle;
+        StockPriceNode x = z.middle;
         if (x.right != null){
             setChildren(y, x.right, y.left, null);
             setChildren(x, x.left, x.middle, null);
@@ -214,7 +219,7 @@ public class StockPriceTree {
      * The key of a node is the maximum key of its children
      * @param node the node to update the key
      */
-    private void updateKey(StockNode node){
+    private void updateKey(StockPriceNode node){
         node.updateKeys(node.left);
 
         if(node.middle != null){
@@ -232,7 +237,7 @@ public class StockPriceTree {
      * @param middle the middle child
      * @param right the right child
      */
-    private void setChildren(StockNode parent, StockNode left, StockNode middle, StockNode right){
+    private void setChildren(StockPriceNode parent, StockPriceNode left, StockPriceNode middle, StockPriceNode right){
         parent.left = left;
         parent.middle = middle;
         parent.right = right;
@@ -246,6 +251,20 @@ public class StockPriceTree {
         }
 
         updateKey(parent);
+        updateSize(parent);
+    }
+
+    private void updateSize(StockPriceNode node) {
+        int sumOfChildren = node.left.size;
+
+        if (node.middle != null) {
+            sumOfChildren += node.middle.size;
+        }
+        if (node.right != null) {
+            sumOfChildren += node.right.size;
+        }
+
+        node.size = sumOfChildren;
     }
 
     private int compareStocks(Stock stock1, Stock stock2){
@@ -253,14 +272,11 @@ public class StockPriceTree {
             throw new IllegalArgumentException();
         }
 
-        if (stock1.getStockId() == null) {
-            return stock2.getStockId() == null ? 0 : 1;
-        }
-        else if (stock2.getStockId() == null) {
-            return -1;
+        if (stock1.getCurrentPrice().compareTo(stock2.getCurrentPrice()) == 0) {
+            return compareStocks(stock1.getStockId(), stock2.getStockId());
         }
 
-        return stock1.getStockId().compareTo(stock2.getStockId());
+        return stock1.getCurrentPrice().compareTo(stock2.getCurrentPrice());
     }
 
     private int compareStocks(String stockId1, String stockId2){
@@ -278,7 +294,7 @@ public class StockPriceTree {
         printTreeRecursive("", root, 0);
     }
 
-    private void printTreeRecursive(String child, StockNode node, int level){
+    private void printTreeRecursive(String child, StockPriceNode node, int level){
         if(node == null){
             return;
         }
@@ -287,18 +303,18 @@ public class StockPriceTree {
             System.out.print("  ");
         }
 
-        System.out.println(child + "Node: " + node.stock.getStockId());
-        System.out.print("                {" );
-        node.stock.getStockData().printTree();
+        System.out.println(child + "Node: " + node.stock.getCurrentPrice());
+//        System.out.print("                {" );
+//        node.stock.getStockData().printTreeRecursive("{", node.stock.getStockData().root, level+1);
 
         printTreeRecursive("L: ", node.left, level+1);
         printTreeRecursive("M: ", node.middle, level+1);
         printTreeRecursive("R: ", node.right, level+1);
     }
 
-/*    public StockNode successor(StockNode node) {
-        StockNode parent = node.p;
-        StockNode temp = node;
+    public StockPriceNode successor(StockPriceNode node) {
+        StockPriceNode parent = node.p;
+        StockPriceNode temp = node;
         while ((temp == parent.right || (parent.right == null && temp == parent.middle))) {
             temp = parent;
             if(parent == this.root){
@@ -307,7 +323,7 @@ public class StockPriceTree {
             parent = parent.p;
         }
 
-        StockNode y;
+        StockPriceNode y;
         if (temp == parent.left) {
             y = parent.middle;
         } else {
@@ -318,23 +334,22 @@ public class StockPriceTree {
             y = y.left;
         }
 
-        if (y.timestamp < Long.MAX_VALUE) {
+        if (y.getStockPrice() < Stock.MAX_PRICE) {
             return y;
         }
-//        if ()
         return null;
     }
 
-    public StockNode predecessor(StockNode node) {
-        StockNode parent = node.p;
-        StockNode temp = node;
+    public StockPriceNode predecessor(StockPriceNode node) {
+        StockPriceNode parent = node.p;
+        StockPriceNode temp = node;
 
         while (temp != root && temp == parent.left) {
             temp = parent;
             parent = parent.p;
         }
 
-        StockNode y;
+        StockPriceNode y;
         if (parent != null) {
             if (temp == parent.right) {
                 y = parent.middle != null ? parent.middle : parent.left;
@@ -353,10 +368,29 @@ public class StockPriceTree {
             }
         }
 
-        if (y.timestamp > Long.MIN_VALUE) {
+        if (y.getStockPrice() > Stock.MIN_PRICE) {
             return y;
         }
 
         return null;
-    }*/
+    }
+
+    public int rank(StockPriceNode node) {
+        int rank = 1;
+        StockPriceNode y = node.p;
+        while (y != null) {
+            if (node == y.middle) {
+                rank = rank + y.left.size;
+            } else if (node == y.right) {
+                rank = rank + y.left.size + y.middle.size;
+            }
+            node = y;
+            y = y.p;
+        }
+        return rank;
+    }
+
+    private boolean isLeaf(StockPriceNode node) {
+        return node == null || node.left == null;
+    }
 }

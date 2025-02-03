@@ -1,6 +1,6 @@
 public class StockDataTree {
 
-    private StockDataNode root;
+    public StockDataNode root;
 
     private boolean isLeaf(StockDataNode node) {
         return node == null || node.left == null;
@@ -234,7 +234,7 @@ public class StockDataTree {
         printTreeRecursive("", root, 0);
     }
 
-    private void printTreeRecursive(String child, StockDataNode node, int level){
+    public void printTreeRecursive(String child, StockDataNode node, int level){
         if(node == null){
             return;
         }
@@ -248,68 +248,5 @@ public class StockDataTree {
         printTreeRecursive("L: ", node.left, level+1);
         printTreeRecursive("M: ", node.middle, level+1);
         printTreeRecursive("R: ", node.right, level+1);
-    }
-
-    public StockDataNode successor(StockDataNode node) {
-        StockDataNode parent = node.p;
-        StockDataNode temp = node;
-        while ((temp == parent.right || (parent.right == null && temp == parent.middle))) {
-            temp = parent;
-            if(parent == this.root){
-                break;
-            }
-            parent = parent.p;
-        }
-
-        StockDataNode y;
-        if (temp == parent.left) {
-            y = parent.middle;
-        } else {
-            y = parent.right;
-        }
-
-        while (!isLeaf(y)) {
-            y = y.left;
-        }
-
-        if (y.timestamp < Long.MAX_VALUE) {
-            return y;
-        }
-        return null;
-    }
-
-    public StockDataNode predecessor(StockDataNode node) {
-        StockDataNode parent = node.p;
-        StockDataNode temp = node;
-
-        while (temp != root && temp == parent.left) {
-            temp = parent;
-            parent = parent.p;
-        }
-
-        StockDataNode y;
-        if (parent != null) {
-            if (temp == parent.right) {
-                y = parent.middle != null ? parent.middle : parent.left;
-            } else {
-                y = parent.left;
-            }
-        } else {
-            y = temp;
-        }
-
-        while (!isLeaf(y)) {
-            if (y.right != null) {
-                y = y.right;
-            } else {
-                y = y.middle;
-            }
-        }
-
-        if (y.timestamp > Long.MIN_VALUE) {
-            return y;
-        }
-
-        return null;
     }
 }

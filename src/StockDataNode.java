@@ -1,10 +1,10 @@
 public class StockDataNode {
     // keys
-    long timestamp;
-    Float priceDifference;
+    public long timestamp;
+    public Float priceDifference;
     // other nodes
-    StockDataNode left, middle, right;
-    StockDataNode p;
+    public StockDataNode left, middle, right;
+    public StockDataNode p;
 
     StockDataNode() {}
 

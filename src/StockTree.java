@@ -1,8 +1,5 @@
 public class StockTree {
 
-    private static final String MIN = "";
-    private static final String MAX = null;
-
     private StockNode root;
 
     private boolean isLeaf(StockNode node) {
@@ -14,8 +11,8 @@ public class StockTree {
         StockNode left = new StockNode();
         StockNode middle = new StockNode();
 
-        left.stock = new Stock(MIN);
-        middle.stock = new Stock(MAX);
+        left.stock = new Stock(Stock.MIN_ID);
+        middle.stock = new Stock(Stock.MAX_ID);
 
         setChildren(root, left, middle, null);
     }
@@ -230,15 +227,20 @@ public class StockTree {
         updateKey(parent);
     }
 
-    private int compareStocks(Stock stock1, Stock stock2){
+    protected int compareStocks(Stock stock1, Stock stock2){
         if (stock1 == null || stock2 == null) {
             throw new IllegalArgumentException();
         }
 
-        if (stock1.getStockId() == null) {
-            return stock2.getStockId() == null ? 0 : 1;
+        if (stock1.getStockId() == Stock.MAX_ID) {
+            if (stock2.getStockId() == Stock.MAX_ID) {
+                return 0;
+            }
+            else {
+                return 1;
+            }
         }
-        else if (stock2.getStockId() == null) {
+        else if (stock2.getStockId() == Stock.MAX_ID) {
             return -1;
         }
 

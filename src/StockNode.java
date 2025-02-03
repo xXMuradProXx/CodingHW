@@ -1,6 +1,7 @@
 public class StockNode {
     // keys
     Stock stock;
+
     // other nodes
     StockNode left, middle, right;
     StockNode p;
@@ -18,7 +19,6 @@ public class StockNode {
         left = middle = right = null;
     }
 
-    //TODO: maybe use copy method
     public void updateKeys(StockNode other){
         this.stock = other.stock;
     }
