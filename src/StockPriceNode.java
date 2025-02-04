@@ -1,26 +1,20 @@
 public class StockPriceNode {
     // keys
-    Stock stock;
+    public Stock stock;
 
     // other nodes
-    StockPriceNode left, middle, right;
-    StockPriceNode p;
-    StockPriceNode successor, predecessor;
+    public StockPriceNode left, middle, right;
+    public StockPriceNode p;
+    public StockPriceNode successor, predecessor;
 
     int size;
 
-    StockPriceNode() {}
+    public StockPriceNode() {}
 
-    StockPriceNode(Stock stock) {
+    public StockPriceNode(Stock stock) {
         this.stock = stock;
         left = middle = right = successor = predecessor = null;
         this.size = 1;
-    }
-
-    StockPriceNode(String stockId, long timestamp, Float price) {
-        this.stock = new Stock(stockId);
-        this.stock.addStockData(new StockData(timestamp, price));
-        left = middle = right = null;
     }
 
     public void updateKeys(StockPriceNode other){

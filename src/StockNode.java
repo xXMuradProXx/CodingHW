@@ -1,21 +1,15 @@
 public class StockNode {
     // keys
-    Stock stock;
+    public Stock stock;
 
     // other nodes
-    StockNode left, middle, right;
-    StockNode p;
+    public StockNode left, middle, right;
+    public StockNode p;
 
-    StockNode() {}
+    public StockNode() {}
 
-    StockNode(Stock stock) {
+    public StockNode(Stock stock) {
         this.stock = stock;
-        left = middle = right = null;
-    }
-
-    StockNode(String stockId, long timestamp, Float price) {
-        this.stock = new Stock(stockId);
-        this.stock.addStockData(new StockData(timestamp, price));
         left = middle = right = null;
     }
 

@@ -1,24 +1,18 @@
 public class StockManager {
-    // add code here
+
     private StockTree stocks;
     private StockPriceTree stockPrices;
 
-    public StockManager() {
-    // add code here
-
-    }
+    public StockManager() {}
 
     // 1. Initialize the system
     public void initStocks() {
-    // add code here
         stocks = new StockTree();
         stockPrices = new StockPriceTree();
     }
 
     // 2. Add a new stock
     public void addStock(String stockId, long timestamp, Float price) {
-    // add code here
-
         if (price <= 0) {
             throw new IllegalArgumentException("The initial price must be greater than 0");
         }
@@ -28,10 +22,10 @@ public class StockManager {
             throw new IllegalArgumentException("Stock already exists");
         }
 
-        Stock stock = new Stock(stockId, timestamp, price); // add the initial stock data
+        Stock stock = new Stock(stockId, timestamp, price); // create stock and add the initial stock data
 
-        stocks.insert(stock);
-        stockPrices.insert(stock);
+        stocks.insert(stock); // insert stock into stocks tree
+        stockPrices.insert(stock); // insert stock into stockPrices tree
     }
 
     // 3. Remove a stock
@@ -42,11 +36,11 @@ public class StockManager {
             throw new IllegalArgumentException("Stock not found");
         }
 
-        Stock stock = stockNode.stock;
-        StockPriceNode stockPriceNode = stockPrices.find(stock);
+        Stock stock = stockNode.stock; // retrieve stock from stockNode
+        stocks.delete(stockNode); // delete stock from stocks tree
 
-        stocks.delete(stockNode);
-        stockPrices.delete(stockPriceNode);
+        StockPriceNode stockPriceNode = stockPrices.find(stock); // find stock in stockPrices tree
+        stockPrices.delete(stockPriceNode); // delete stock from stockPrices tree
     }
 
     // 4. Update a stock price
@@ -62,13 +56,11 @@ public class StockManager {
 
         Stock stock = stockNode.stock;
 
-        StockPriceNode stockPriceNode = stockPrices.find(stock);
-        stockPrices.delete(stockPriceNode);
+        StockPriceNode stockPriceNode = stockPrices.find(stock); // find stock in stockPrices tree
+        stockPrices.delete(stockPriceNode); // delete stock from stockPrices tree
 
-        stock.addStockData(new StockData(timestamp, priceDifference));
-
-        stockPrices.insert(stock);
-
+        stock.addStockData(timestamp, priceDifference); // update stock
+        stockPrices.insert(stock); // insert stock with new price back into stockPrices tree
     }
 
     // 5. Get the current price of a stock
@@ -96,18 +88,16 @@ public class StockManager {
             throw new IllegalArgumentException("Timestamp not found");
         }
 
-        stockPrices.delete(stockPrices.find(stock));
+        stockPrices.delete(stockPrices.find(stock)); // delete stock from stockPrices tree
 
-        stockData.delete(stockDataNode);
-        stock.removeStockData(stockDataNode.priceDifference);
+        stockData.delete(stockDataNode); // delete relevant stock data from stock
+        stock.removeStockData(stockDataNode.priceDifference); // update stock price
 
-        stockPrices.insert(stock);
+        stockPrices.insert(stock); // insert updated stock with new price back into stockPrices tree
     }
 
     // 7. Get the amount of stocks in a given price range
     public int getAmountStocksInPriceRange(Float price1, Float price2) {
-    // add code here
-
         if (price1 > price2) {
             throw new IllegalArgumentException("Illegal price range");
         }
@@ -138,7 +128,6 @@ public class StockManager {
 
     // 8. Get a list of stock IDs within a given price range
     public String[] getStocksInPriceRange(Float price1, Float price2) {
-
         if (price1 > price2) {
             throw new IllegalArgumentException("Illegal price range");
         }
@@ -146,25 +135,24 @@ public class StockManager {
         int numStocksInRange = getAmountStocksInPriceRange(price1, price2);
         String[] stocksInRange = new String[numStocksInRange];
 
-        // Create two dummy stocks with the given prices
+        // Create dummy stock with the given prices
         Stock min = new Stock(Stock.MIN_ID, price1);
-        Stock max = new Stock(Stock.MAX_ID, price2);
 
-        // Insert the dummy stocks into the tree
+        // Insert the dummy stock into the tree
         stockPrices.insert(min);
-        stockPrices.insert(max);
 
-        // Find the nodes with dummy stocks in the tree
+        // Find the leaf node with dummy stock in the tree
         StockPriceNode minNode = stockPrices.find(min);
 
-        StockPriceNode temp = minNode.successor; // Move to the next node which actually holds the first stock in the range
+        StockPriceNode temp = minNode.successor; // Move to the next leaf node which actually holds the first stock in the range
 
+        // Get the stock IDs in the given range
         for (int i = 0; i < numStocksInRange; i++) {
             stocksInRange[i] = temp.stock.getStockId();
             temp = temp.successor;
         }
 
-        // Delete the dummy stocks from the tree
+        // Delete the dummy stock from the tree
         stockPrices.delete(minNode);
 
         return stocksInRange;

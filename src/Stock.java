@@ -1,9 +1,9 @@
+public class Stock {
 
-public class Stock implements Comparable<Stock> {
-    private String stockId;
-    private Long timestamp;
+    private final String stockId;
+    private long timestamp;
     private Float currentPrice;
-    private StockDataTree stockData;
+    private final StockDataTree stockData;
 
     public static final String MIN_ID = "";
     public static final String MAX_ID = null;
@@ -13,7 +13,6 @@ public class Stock implements Comparable<Stock> {
 
     public static final Float MIN_PRICE = Float.NEGATIVE_INFINITY;
     public static final Float MAX_PRICE = Float.POSITIVE_INFINITY;
-
 
     public Stock(String stockId) {
         this.stockId = stockId;
@@ -37,21 +36,13 @@ public class Stock implements Comparable<Stock> {
         return stockId;
     }
 
-    public void setStockId(String stockId) {
-        this.stockId = stockId;
-    }
-
     public StockDataTree getStockData() {
         return stockData;
     }
 
-    public void setStockData(StockDataTree stockData) {
-        this.stockData = stockData;
-    }
-
-    public void addStockData(StockData stockData) {
-        this.stockData.insert(stockData.getTimestamp(), stockData.getPriceDifference());
-        this.currentPrice += stockData.getPriceDifference();
+    public void addStockData(long timestamp, Float priceDifference) {
+        this.stockData.insert(timestamp, priceDifference);
+        this.currentPrice += priceDifference;
     }
 
     public void removeStockData(Float priceDifference) {
@@ -60,14 +51,5 @@ public class Stock implements Comparable<Stock> {
 
     public Float getCurrentPrice() {
         return currentPrice;
-    }
-
-    public void setCurrentPrice(Float currentPrice) {
-        this.currentPrice = currentPrice;
-    }
-
-    @Override
-    public int compareTo(Stock other) {
-        return this.currentPrice.compareTo(other.currentPrice);
     }
 }

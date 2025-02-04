@@ -17,7 +17,6 @@ public class StockTree {
         setChildren(root, left, middle, null);
     }
 
-    // might remove it because root is always initialized with a sentinel
     public StockNode find(String stockId) {
         return findRecursive(root, stockId);
     }
@@ -188,11 +187,6 @@ public class StockTree {
         return z;
     }
 
-    /**
-     * Update the key of the node
-     * The key of a node is the maximum key of its children
-     * @param node the node to update the key
-     */
     private void updateKey(StockNode node){
         node.updateKeys(node.left);
 
@@ -204,13 +198,6 @@ public class StockTree {
         }
     }
 
-    /**
-     *
-     * @param parent the parent node
-     * @param left the left child
-     * @param middle the middle child
-     * @param right the right child
-     */
     private void setChildren(StockNode parent, StockNode left, StockNode middle, StockNode right){
         parent.left = left;
         parent.middle = middle;
@@ -232,19 +219,7 @@ public class StockTree {
             throw new IllegalArgumentException();
         }
 
-        if (stock1.getStockId() == Stock.MAX_ID) {
-            if (stock2.getStockId() == Stock.MAX_ID) {
-                return 0;
-            }
-            else {
-                return 1;
-            }
-        }
-        else if (stock2.getStockId() == Stock.MAX_ID) {
-            return -1;
-        }
-
-        return stock1.getStockId().compareTo(stock2.getStockId());
+        return compareStocks(stock1.getStockId(), stock2.getStockId());
     }
 
     private int compareStocks(String stockId1, String stockId2){
@@ -257,90 +232,4 @@ public class StockTree {
 
         return stockId1.compareTo(stockId2);
     }
-
-    public void printTree(){
-        printTreeRecursive("", root, 0);
-    }
-
-    private void printTreeRecursive(String child, StockNode node, int level){
-        if(node == null){
-            return;
-        }
-
-        for (int i = 0; i <= level; i++) {
-            System.out.print("  ");
-        }
-
-        System.out.println(child + "Node: " + node.stock.getStockId());
-        System.out.print("                {" );
-        node.stock.getStockData().printTree();
-
-        printTreeRecursive("L: ", node.left, level+1);
-        printTreeRecursive("M: ", node.middle, level+1);
-        printTreeRecursive("R: ", node.right, level+1);
-    }
-
-/*    public StockNode successor(StockNode node) {
-        StockNode parent = node.p;
-        StockNode temp = node;
-        while ((temp == parent.right || (parent.right == null && temp == parent.middle))) {
-            temp = parent;
-            if(parent == this.root){
-                break;
-            }
-            parent = parent.p;
-        }
-
-        StockNode y;
-        if (temp == parent.left) {
-            y = parent.middle;
-        } else {
-            y = parent.right;
-        }
-
-        while (!isLeaf(y)) {
-            y = y.left;
-        }
-
-        if (y.timestamp < Long.MAX_VALUE) {
-            return y;
-        }
-//        if ()
-        return null;
-    }
-
-    public StockNode predecessor(StockNode node) {
-        StockNode parent = node.p;
-        StockNode temp = node;
-
-        while (temp != root && temp == parent.left) {
-            temp = parent;
-            parent = parent.p;
-        }
-
-        StockNode y;
-        if (parent != null) {
-            if (temp == parent.right) {
-                y = parent.middle != null ? parent.middle : parent.left;
-            } else {
-                y = parent.left;
-            }
-        } else {
-            y = temp;
-        }
-
-        while (!isLeaf(y)) {
-            if (y.right != null) {
-                y = y.right;
-            } else {
-                y = y.middle;
-            }
-        }
-
-        if (y.timestamp > Long.MIN_VALUE) {
-            return y;
-        }
-
-        return null;
-    }*/
 }

@@ -6,13 +6,9 @@ public class StockDataNode {
     public StockDataNode left, middle, right;
     public StockDataNode p;
 
-    StockDataNode() {}
+    public StockDataNode() {}
 
-    StockDataNode(long timestamp) {
-        this(timestamp, null);
-    }
-
-    StockDataNode(long timestamp, Float priceDifference) {
+    public StockDataNode(long timestamp, Float priceDifference) {
         this.timestamp = timestamp;
         this.priceDifference = priceDifference;
         left = middle = right = null;

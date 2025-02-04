@@ -14,7 +14,6 @@ public class StockPriceTree {
         setChildren(root, left, middle, null);
     }
 
-    // might remove it because root is always initialized with a sentinel
     public StockPriceNode find(Stock stock) {
         return findRecursive(root, stock);
     }
@@ -23,7 +22,8 @@ public class StockPriceTree {
         if (isLeaf(stockPriceNode)) {
             if (compareStocks(stockPriceNode.stock, stock) == 0) {
                 return stockPriceNode;
-            } else {
+            }
+            else {
                 return null;
             }
         }
@@ -54,7 +54,7 @@ public class StockPriceTree {
         newNode.successor = successor;
     }
 
-    public void insertRecursive(StockPriceNode newNode) {
+    private void insertRecursive(StockPriceNode newNode) {
         StockPriceNode y = this.root;
 
         while(!isLeaf(y)){
@@ -143,7 +143,7 @@ public class StockPriceTree {
         deleteRecursive(x);
     }
 
-    public void deleteRecursive(StockPriceNode x){
+    private void deleteRecursive(StockPriceNode x){
         StockPriceNode y = x.p;
 
         if(x == y.left){
@@ -214,11 +214,6 @@ public class StockPriceTree {
         return z;
     }
 
-    /**
-     * Update the key of the node
-     * The key of a node is the maximum key of its children
-     * @param node the node to update the key
-     */
     private void updateKey(StockPriceNode node){
         node.updateKeys(node.left);
 
@@ -230,13 +225,6 @@ public class StockPriceTree {
         }
     }
 
-    /**
-     *
-     * @param parent the parent node
-     * @param left the left child
-     * @param middle the middle child
-     * @param right the right child
-     */
     private void setChildren(StockPriceNode parent, StockPriceNode left, StockPriceNode middle, StockPriceNode right){
         parent.left = left;
         parent.middle = middle;
@@ -288,28 +276,6 @@ public class StockPriceTree {
         }
 
         return stockId1.compareTo(stockId2);
-    }
-
-    public void printTree(){
-        printTreeRecursive("", root, 0);
-    }
-
-    private void printTreeRecursive(String child, StockPriceNode node, int level){
-        if(node == null){
-            return;
-        }
-
-        for (int i = 0; i <= level; i++) {
-            System.out.print("  ");
-        }
-
-        System.out.println(child + "Node: " + node.stock.getCurrentPrice());
-//        System.out.print("                {" );
-//        node.stock.getStockData().printTreeRecursive("{", node.stock.getStockData().root, level+1);
-
-        printTreeRecursive("L: ", node.left, level+1);
-        printTreeRecursive("M: ", node.middle, level+1);
-        printTreeRecursive("R: ", node.right, level+1);
     }
 
     public StockPriceNode successor(StockPriceNode node) {
@@ -381,7 +347,8 @@ public class StockPriceTree {
         while (y != null) {
             if (node == y.middle) {
                 rank = rank + y.left.size;
-            } else if (node == y.right) {
+            }
+            else if (node == y.right) {
                 rank = rank + y.left.size + y.middle.size;
             }
             node = y;

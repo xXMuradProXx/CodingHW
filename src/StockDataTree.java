@@ -1,6 +1,6 @@
 public class StockDataTree {
 
-    public StockDataNode root;
+    private StockDataNode root;
 
     private boolean isLeaf(StockDataNode node) {
         return node == null || node.left == null;
@@ -11,13 +11,12 @@ public class StockDataTree {
         StockDataNode left = new StockDataNode();
         StockDataNode middle = new StockDataNode();
 
-        left.timestamp = Long.MIN_VALUE;
-        middle.timestamp = Long.MAX_VALUE;
+        left.timestamp = Stock.MIN_TIMESTAMP;
+        middle.timestamp = Stock.MAX_TIMESTAMP;
 
         setChildren(root, left, middle, null);
     }
 
-    // might remove it because root is always initialized with a sentinel
     public StockDataNode find(long timestamp) {
         return findRecursive(root, timestamp);
     }
@@ -191,11 +190,6 @@ public class StockDataTree {
         return z;
     }
 
-    /**
-     * Update the key of the node
-     * The key of a node is the maximum key of its children
-     * @param node the node to update the key
-     */
     private void updateKey(StockDataNode node){
         node.updateKeys(node.left);
 
@@ -207,13 +201,6 @@ public class StockDataTree {
         }
     }
 
-    /**
-     *
-     * @param parent the parent node
-     * @param left the left child
-     * @param middle the middle child
-     * @param right the right child
-     */
     private void setChildren(StockDataNode parent, StockDataNode left, StockDataNode middle, StockDataNode right){
         parent.left = left;
         parent.middle = middle;
@@ -230,23 +217,4 @@ public class StockDataTree {
         updateKey(parent);
     }
 
-    public void printTree(){
-        printTreeRecursive("", root, 0);
-    }
-
-    public void printTreeRecursive(String child, StockDataNode node, int level){
-        if(node == null){
-            return;
-        }
-
-        for (int i = 0; i <= level; i++) {
-            System.out.print("  ");
-        }
-
-        System.out.println(child + "Node: " + node.timestamp + "  " + node.priceDifference);
-
-        printTreeRecursive("L: ", node.left, level+1);
-        printTreeRecursive("M: ", node.middle, level+1);
-        printTreeRecursive("R: ", node.right, level+1);
-    }
 }
